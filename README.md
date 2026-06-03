@@ -1,0 +1,67 @@
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+# maup
+
+<!-- badges: start -->
+
+<!-- badges: end -->
+
+**maup** provides data from [Brown, Kenny, and Simko (*Nature Cities*,
+2025)](https://osf.io/preprints/socarxiv/nv5up_v2) on simulated Census
+tract maps for every U.S. county across the 2000, 2010, and 2020
+decennial Censuses. Measuring quantities like racial segregation
+requires aggregating population data into geographic units, but the
+choice of boundaries affects the resulting estimates, a well-known
+challenge called the Modifiable Areal Unit Problem (MAUP). These
+simulated tract plans allow researchers to quantify aggregation-induced
+variability in any statistic that can be computed from Census tract
+data.
+
+## Installation
+
+Install the development version from
+[GitHub](https://github.com/alarm-redist/maup) with:
+
+``` r
+# install.packages('remotes')
+pak::pak('alarm-redist/maup')
+```
+
+## Usage
+
+A [Harvard Dataverse API
+key](https://guides.dataverse.org/en/latest/user/account.html) is
+required and should be set as the environment variable `DATAVERSE_KEY`.
+See [the `dataverse` package
+documentation](https://iqss.github.io/dataverse-client-r/) for more
+details
+
+``` r
+library(maup)
+
+# download simulated tract maps for New Jersey counties (2020)
+map_nj <- maup_tract_map('NJ', year = 2020)
+
+# download simulated tract plans for New Jersey counties (2020)
+plans_nj <- maup_tract_plans('NJ', year = 2020)
+```
+
+`maup_tract_map()` returns a named list of tract-level map objects, one
+per county. `maup_tract_plans()` returns a named list of simulated tract
+plan objects, named by county FIPS code.
+
+## Caching
+
+By default, downloads are stored in a temporary directory that does not
+persist between sessions. Set `options(maup.use_cache = TRUE)` to cache
+downloads persistently in `tools::R_user_dir('maup', 'data')`, or
+`options(maup.cache_dir = '/path/to/dir')` to use a custom location.
+
+``` r
+options(maup.use_cache = TRUE)
+
+maup_cache_path()  # show cache location
+maup_cache_size()  # show total cache size
+maup_cache_clear() # delete all cached files
+```

@@ -1,0 +1,17 @@
+url: https://alarm-redist.org/maup/
+
+template:
+  bootstrap: 5
+
+reference:
+  - title: Download data
+    desc: Download maps and plans from the Harvard Dataverse.
+    contents:
+      - maup_tract_map
+      - maup_tract_plans
+  - title: Cache management
+    desc: Inspect and clear the local download cache.
+    contents:
+      - maup_cache_path
+      - maup_cache_size
+      - maup_cache_clear

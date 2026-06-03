@@ -17,8 +17,28 @@ Authors@R: c(
            role = c("aut"),
            email = "tsimko@umich.edu",
            comment = c(ORCID = "0000-0001-9382-7346")))
-Description: What the package does (one paragraph).
+Description: Downloads simulated Census tract maps and plans for every U.S.
+    county across the 2000, 2010, and 2020 decennial Censuses from the Harvard
+    Dataverse. This data supports the study of the Modifiable Areal Unit Problem
+    by allowing researchers to quantify how sensitive any tract-level
+    statistic is to the choice of geographic boundaries. Builds on data from
+    Brown, Kenny, and Simko (2025) <doi:10.31235/osf.io/nv5up_v2>.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
+Depends:
+    R (>= 4.1.0)
+Imports:
+    cli,
+    dataverse,
+    censable,
+    rlang
+Suggests:
+    redist,
+    testthat (>= 3.0.0),
+    withr
+Config/testthat/edition: 3
+Language: en-US
+URL: https://github.com/alarm-redist/maup/
+BugReports: https://github.com/alarm-redist/maup/issues/

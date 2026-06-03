@@ -5,3 +5,5 @@
 ^\.vscode$
 ^jarl\.toml$
 ^\.claude$
+^_pkgdown\.yml$
+^README\.Rmd$
