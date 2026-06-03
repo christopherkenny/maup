@@ -1,3 +1,7 @@
 ^maup\.Rproj$
 ^\.Rproj\.user$
 ^LICENSE\.md$
+^[.]?air[.]toml$
+^\.vscode$
+^jarl\.toml$
+^\.claude$

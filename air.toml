@@ -1,0 +1,4 @@
+[format]
+line-ending = "lf"
+line-width = 96
+default-table = false
