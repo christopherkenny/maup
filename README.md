@@ -8,7 +8,7 @@
 <!-- badges: end -->
 
 **maup** provides data from [Brown, Kenny, and Simko (*Nature Cities*,
-2025)](https://osf.io/preprints/socarxiv/nv5up_v2) on simulated Census
+2026+)](https://osf.io/preprints/socarxiv/nv5up_v2) on simulated Census
 tract maps for every U.S. county across the 2000, 2010, and 2020
 decennial Censuses. Measuring quantities like racial segregation
 requires aggregating population data into geographic units, but the
