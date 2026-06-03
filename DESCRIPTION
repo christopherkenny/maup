@@ -1,0 +1,24 @@
+Package: maup
+Title: Sampling Solutions to the Modifiable Areal Unit Problem
+Version: 0.0.0.9000
+Authors@R: c(
+    person(given = "Jacob R.",
+           family = "Brown",
+           role = c("aut"),
+           email = "jbrown13@bu.edu",
+           comment = c(ORCID = "0000-0001-8037-5360")),
+    person(given = "Christopher T.",
+           family = "Kenny",
+           role = c("aut", "cre"),
+           email = "ctkenny@proton.me",
+           comment = c(ORCID = "0000-0002-9386-6860")),
+    person(given = "Tyler",
+           family = "Simko",
+           role = c("aut"),
+           email = "tsimko@umich.edu",
+           comment = c(ORCID = "0000-0001-9382-7346")))
+Description: What the package does (one paragraph).
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.3
