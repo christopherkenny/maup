@@ -19,7 +19,14 @@ dv_ensure_file_list <- function(refresh = FALSE) {
       }
     )
     ids <- vapply(full_files, \(f) f$dataFile$id, integer(1))
-    names(ids) <- vapply(full_files, \(f) f$label, character(1))
+    names(ids) <- vapply(
+      full_files,
+      \(f) {
+        dir <- f$directoryLabel
+        if (!is.null(dir) && nzchar(dir)) paste0(dir, '/', f$label) else f$label
+      },
+      character(1)
+    )
     assign('files', ids, envir = dv_files_cache)
   }
   get('files', envir = dv_files_cache)

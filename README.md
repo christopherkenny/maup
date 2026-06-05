@@ -7,7 +7,7 @@
 
 <!-- badges: end -->
 
-**maup** provides data from [Brown, Kenny, and Simko (*Nature Cities*,
+`maup` provides data from [Brown, Kenny, and Simko (*Nature Cities*,
 2026+)](https://osf.io/preprints/socarxiv/nv5up_v2) on simulated Census
 tract maps for every U.S. county across the 2000, 2010, and 2020
 decennial Censuses. Measuring quantities like racial segregation
@@ -21,11 +21,11 @@ data.
 ## Installation
 
 Install the development version from
-[GitHub](https://github.com/alarm-redist/maup) with:
+[GitHub](https://github.com/christopherkenny/maup) with:
 
 ``` r
-# install.packages('remotes')
-pak::pak('alarm-redist/maup')
+# install.packages('pak')
+pak::pak('christopherkenny/maup')
 ```
 
 ## Usage

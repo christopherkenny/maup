@@ -4,10 +4,13 @@
 \alias{maup_tract_map}
 \title{Download MAUP county-level maps}
 \usage{
-maup_tract_map(state, year = 2020, refresh = FALSE)
+maup_tract_map(state, county = NULL, year = 2020, refresh = FALSE)
 }
 \arguments{
 \item{state}{A state name, abbreviation, or FIPS code.}
+
+\item{county}{An optional character vector of 3-digit county FIPS codes.
+If \code{NULL} (the default), all counties for the state are returned.}
 
 \item{year}{The redistricting cycle year.}
 
@@ -25,5 +28,6 @@ county.
 \examples{
 \dontshow{if (Sys.getenv('DATAVERSE_KEY') != '') withAutoprint(\{ # examplesIf}
 maup_tract_map('NJ', year = 2020)
+maup_tract_map('NJ', year = 2020, county = '001')
 \dontshow{\}) # examplesIf}
 }
