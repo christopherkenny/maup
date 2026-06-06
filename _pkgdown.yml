@@ -1,7 +1,7 @@
-url: https://alarm-redist.org/maup/
-
+url: http://christophertkenny.com/maup/
 template:
   bootstrap: 5
+  package: ctktemplate
 
 reference:
   - title: Download data

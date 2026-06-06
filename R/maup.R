@@ -18,7 +18,13 @@
 #' maup_tract_map('NJ', year = 2020)
 #' maup_tract_map('NJ', year = 2020, county = '001')
 maup_tract_map <- function(state, county = NULL, year = 2020, refresh = FALSE) {
-  year <- rlang::arg_match(year, c(2000L, 2010L, 2020L))
+  year <- as.character(year)
+  if (!year %in% c('2000', '2010', '2020')) {
+    cli::cli_abort(
+      '{.arg year} must be one of 2000, 2010, or 2020, not {.val {year}}.',
+      call = NULL
+    )
+  }
   abb <- match_state(state)
   STATE <- toupper(abb)
   fname <- paste0(STATE, '/', year, '/map_', abb, '_', year, '.rds')
@@ -69,60 +75,92 @@ maup_tract_map <- function(state, county = NULL, year = 2020, refresh = FALSE) {
 #' maup_tract_plans('NJ', year = 2020)
 #' maup_tract_plans('NJ', year = 2020, county = '001')
 maup_tract_plans <- function(state, county = NULL, year = 2020, refresh = FALSE) {
-  year <- rlang::arg_match(year, c(2000L, 2010L, 2020L))
+  year <- as.character(year)
+  if (!year %in% c('2000', '2010', '2020')) {
+    cli::cli_abort(
+      '{.arg year} must be one of 2000, 2010, or 2020, not {.val {year}}.',
+      call = NULL
+    )
+  }
   abb <- match_state(state)
   STATE <- toupper(abb)
 
-  files <- dv_ensure_file_list(refresh = refresh)
-  prefix <- paste0(STATE, '/', year, '/plans_', abb, '_')
-  suffix <- paste0('_', year, '.rds')
-  county_fnames <- names(files)[
-    startsWith(names(files), prefix) & endsWith(names(files), suffix)
-  ]
+  cache_dir <- file.path(maup_download_path(), STATE, year)
+  file_prefix <- paste0('plans_', abb, '_')
+  file_suffix <- paste0('_', year, '.rds')
 
-  if (length(county_fnames) == 0) {
+  # Identify which county cache files already exist
+  cached <- if (dir.exists(cache_dir)) {
+    existing <- list.files(
+      cache_dir,
+      pattern = paste0(
+        '^',
+        file_prefix,
+        '[0-9]{3}',
+        file_suffix,
+        '$'
+      )
+    )
+    sub(file_suffix, '', sub(file_prefix, '', existing))
+  } else {
+    character(0)
+  }
+
+  county <- if (!is.null(county)) as.character(county) else NULL
+
+  needs_download <- isTRUE(refresh) ||
+    (is.null(county) && length(cached) == 0L) ||
+    (!is.null(county) && !all(county %in% cached))
+
+  if (needs_download) {
+    zip_fname <- paste0(STATE, '/', year, '/plans_', abb, '_', year, '.zip')
+    dv_ensure_file_list(refresh = refresh)
+    cli::cli_inform('Downloading plans for {STATE} ({year})...')
+    raw <- dv_download_handle(zip_fname, 'Plans', STATE)
+
+    tmp_zip <- tempfile(fileext = '.zip')
+    on.exit(unlink(tmp_zip), add = TRUE)
+    writeBin(raw, tmp_zip)
+
+    dir.create(cache_dir, recursive = TRUE, showWarnings = FALSE)
+    utils::unzip(tmp_zip, exdir = cache_dir, junkpaths = TRUE)
+
+    cached <- sub(
+      file_suffix,
+      '',
+      sub(
+        file_prefix,
+        '',
+        list.files(
+          cache_dir,
+          pattern = paste0('^', file_prefix, '[0-9]{3}', file_suffix, '$')
+        )
+      )
+    )
+  }
+
+  if (length(cached) == 0L) {
     cli::cli_abort('No plans found for {.val {STATE}} ({year}).', call = NULL)
   }
 
-  fips_ids <- sub(suffix, '', sub(prefix, '', county_fnames))
-
-  if (!is.null(county)) {
-    county <- as.character(county)
-    keep <- fips_ids %in% county
+  fips_ids <- if (!is.null(county)) {
+    keep <- county %in% cached
     if (!any(keep)) {
       cli::cli_abort(
         'No plans found for the requested {.arg county} in {.val {STATE}} ({year}).',
         call = NULL
       )
     }
-    county_fnames <- county_fnames[keep]
-    fips_ids <- fips_ids[keep]
+    county[keep]
+  } else {
+    cached
   }
 
-  cache_dir <- file.path(maup_download_path(), STATE, year)
-  cache_paths <- file.path(
-    cache_dir,
-    paste0('plans_', abb, '_', fips_ids, '_', year, '.rds')
-  )
-  needs_download <- !file.exists(cache_paths) | isTRUE(refresh)
-
-  out <- vector('list', length(county_fnames))
+  out <- vector('list', length(fips_ids))
   names(out) <- fips_ids
-
-  for (i in which(!needs_download)) {
-    out[[i]] <- readRDS(cache_paths[[i]])
-  }
-
-  to_dl <- which(needs_download)
-  if (length(to_dl) > 0) {
-    dir.create(cache_dir, recursive = TRUE, showWarnings = FALSE)
-    for (j in cli::cli_progress_along(to_dl, name = 'Downloading plans')) {
-      i <- to_dl[[j]]
-      raw <- dv_download_handle(county_fnames[[i]], 'Plans', STATE)
-      result <- read_rds_xz(raw)
-      saveRDS(result, cache_paths[[i]])
-      out[[i]] <- result
-    }
+  for (i in seq_along(fips_ids)) {
+    result <- readRDS(file.path(cache_dir, paste0(file_prefix, fips_ids[[i]], file_suffix)))
+    out[[i]] <- unwrap_plans(result)
   }
 
   out
